@@ -1,13 +1,21 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from .models import db, Game, Player
 import secrets
 
-games = {}
-
 main = Blueprint("main", __name__)
+
+
+def _generate_game_code():
+    code = secrets.token_hex(3)
+    while Game.query.filter_by(code=code).first() is not None:
+        code = secrets.token_hex(3)
+    return code
+
 
 @main.route("/")
 def home():
     return render_template("index.html")
+
 
 @main.route("/create_game", methods=["POST"])
 def create_game():
@@ -17,14 +25,16 @@ def create_game():
     if not username or not game_name:
         return "Missing username or game name", 400
 
-    code = secrets.token_hex(3)
-    games[code] = {
-        "name": game_name,
-        "host": username,
-        "scores": {}
-    }
+    code = _generate_game_code()
+    game = Game(code=code, name=game_name, host=username)
+    player = Player(name=username, score=0, game=game)
+
+    db.session.add(game)
+    db.session.add(player)
+    db.session.commit()
 
     return redirect(url_for("main.game", code=code))
+
 
 @main.route("/join_game", methods=["POST"])
 def join_game():
@@ -34,50 +44,57 @@ def join_game():
     if not username or not game_code:
         return "Missing username or game code", 400
 
-    game = games.get(game_code)
+    game = Game.query.filter_by(code=game_code).first()
     if not game:
         return "Game not found", 404
 
-    if "scores" not in game:
-        game["scores"] = {}
-
-    if username not in game["scores"]:
-        game["scores"][username] = 0
+    existing_player = Player.query.filter_by(name=username, game_id=game.id).first()
+    if not existing_player:
+        player = Player(name=username, score=0, game=game)
+        db.session.add(player)
+        db.session.commit()
 
     return redirect(url_for("main.game", code=game_code))
 
+
 @main.route("/game/<code>")
 def game(code):
-    game = games.get(code)
+    game = Game.query.filter_by(code=code).first()
 
     if not game:
         return "Game not found"
 
-    # build leaderboard
-    scores = game.get("scores", {})
-
-    sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    sorted_scores = sorted(
+        [(player.name, player.score) for player in game.players],
+        key=lambda x: x[1],
+        reverse=True,
+    )
 
     return render_template(
         "game.html",
         game=game,
         code=code,
-        scores=sorted_scores
+        scores=sorted_scores,
     )
+
 
 @main.route("/add_score/<code>", methods=["POST"])
 def add_score(code):
-    player = request.form.get("player")
-    points = int(request.form.get("points"))
+    player_name = request.form.get("player")
+    try:
+        points = int(request.form.get("points", 0))
+    except ValueError:
+        points = 0
 
-    game = games.get(code)
+    game = Game.query.filter_by(code=code).first()
+    if not game:
+        return "Game not found", 404
 
-    if "scores" not in game:
-        game["scores"] = {}
+    player = Player.query.filter_by(name=player_name, game_id=game.id).first()
+    if not player:
+        return "Player not found", 404
 
-    if player not in game["scores"]:
-        game["scores"][player] = 0
+    player.score += points
+    db.session.commit()
 
-    game["scores"][player] += points
-
-    return redirect(f"/game/{code}")
+    return redirect(url_for("main.game", code=code))
