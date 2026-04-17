@@ -41,7 +41,10 @@ def _ensure_schema_migrations():
             conn.execute(text("ALTER TABLE games ADD COLUMN platform VARCHAR(50) DEFAULT 'Wii' NOT NULL"))
 
         if "started" not in columns:
-            conn.execute(text("ALTER TABLE games ADD COLUMN started BOOLEAN DEFAULT 0 NOT NULL"))
+            if db.engine.dialect.name == "postgresql":
+                conn.execute(text("ALTER TABLE games ADD COLUMN started BOOLEAN DEFAULT FALSE NOT NULL"))
+            else:
+                conn.execute(text("ALTER TABLE games ADD COLUMN started BOOLEAN DEFAULT 0 NOT NULL"))
 
         if "created_at" not in columns:
             if db.engine.dialect.name == "sqlite":
