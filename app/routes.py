@@ -4,6 +4,36 @@ import secrets
 
 main = Blueprint("main", __name__)
 
+GAME_PLANS = {
+    "Wii Sports Classic": {
+        "platform": "Wii",
+        "events": [
+            ("Tennis", "Heat"),
+            ("Bowling", "Heat"),
+            ("Boxing", "Semi"),
+            ("Golf", "Final"),
+        ],
+    },
+    "Switch Sports Showcase": {
+        "platform": "Switch",
+        "events": [
+            ("Tennis Smash", "Heat"),
+            ("Bowling Blast", "Heat"),
+            ("Soccer Strikers", "Semi"),
+            ("Archery Assault", "Final"),
+        ],
+    },
+    "Olympic Sports Challenge": {
+        "platform": "Switch",
+        "events": [
+            ("Face Race", "Heat"),
+            ("Golf", "Semi"),
+            ("Lawnbowling", "Final"),
+        ],
+    },
+    "Custom": {"platform": "Wii", "events": []},
+}
+
 
 def _generate_game_code():
     code = secrets.token_hex(3)
@@ -20,14 +50,17 @@ def _stage_sort_value(stage: str) -> int:
 @main.route("/")
 def home():
     games = Game.query.order_by(Game.created_at.desc()).limit(10).all()
-    return render_template("index.html", games=games)
+    plans = list(GAME_PLANS.keys())
+    return render_template("index.html", games=games, plans=plans)
 
 
 @main.route("/create_game", methods=["POST"])
 def create_game():
     username = request.form.get("username")
     game_name = request.form.get("game_name")
-    platform = request.form.get("platform", "Wii")
+    game_plan = request.form.get("game_plan", "Wii Sports Classic")
+    plan = GAME_PLANS.get(game_plan, GAME_PLANS["Wii Sports Classic"])
+    platform = plan.get("platform", "Wii")
     team_name = request.form.get("team_name", "Team 1").strip() or "Team 1"
 
     if not username or not game_name:
@@ -37,10 +70,14 @@ def create_game():
     game = Game(code=code, name=game_name, host=username, platform=platform)
     team = Team(name=team_name, game=game)
     player = Player(name=username, score=0, game=game, team=team)
-
     db.session.add(game)
     db.session.add(team)
     db.session.add(player)
+
+    for index, (event_name, stage) in enumerate(plan.get("events", []), start=1):
+        event = Event(name=event_name, stage=stage, sort_order=index, game=game)
+        db.session.add(event)
+
     db.session.commit()
 
     return redirect(url_for("main.game", code=code))
