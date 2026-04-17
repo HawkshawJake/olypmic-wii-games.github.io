@@ -1,5 +1,6 @@
 from flask import Flask
 import os
+import secrets
 from sqlalchemy import inspect, text
 
 from .models import db
@@ -7,6 +8,7 @@ from .models import db
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 
     database_url = os.getenv("DATABASE_URL", "sqlite:///games.db")
     if database_url.startswith("postgres://"):
@@ -37,6 +39,9 @@ def _ensure_schema_migrations():
     with db.engine.begin() as conn:
         if "platform" not in columns:
             conn.execute(text("ALTER TABLE games ADD COLUMN platform VARCHAR(50) DEFAULT 'Wii' NOT NULL"))
+
+        if "started" not in columns:
+            conn.execute(text("ALTER TABLE games ADD COLUMN started BOOLEAN DEFAULT 0 NOT NULL"))
 
         if "created_at" not in columns:
             if db.engine.dialect.name == "sqlite":

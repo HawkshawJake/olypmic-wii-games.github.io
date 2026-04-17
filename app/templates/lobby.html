@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ game.name }} Lobby | Wii Olympics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-6xl mx-auto p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-blue-900">{{ game.name }} Lobby</h1>
+            <p class="text-gray-500">Invite players with code <span class="font-mono font-bold">{{ code }}</span></p>
+            <p class="text-sm text-gray-500">Host: <span class="font-semibold">{{ game.host }}</span></p>
+            <p class="text-sm text-gray-500">Platform: <span class="font-semibold">{{ game.platform }}</span></p>
+        </div>
+        <a href="/" class="text-sm text-blue-500 hover:underline">← Back</a>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+        <div class="space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow ring-2 ring-blue-100">
+                <h2 class="text-xl font-bold mb-3">Players</h2>
+                <p class="text-sm text-gray-500 mb-4">Logged in as <span class="font-semibold">{{ user }}</span></p>
+                {% if game.players %}
+                    <div class="space-y-3">
+                        {% for player in game.players %}
+                            <div class="rounded-2xl border border-blue-100 bg-blue-50 p-3">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="font-semibold text-blue-800">{{ player.name }}</p>
+                                        <p class="text-sm text-blue-600">{{ player.team.name if player.team else 'No team yet' }}</p>
+                                    </div>
+                                    <span class="text-xs font-semibold text-blue-700">{{ player.score }} pts</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500">No players have joined yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow">
+                <h2 class="text-xl font-bold mb-4">Add Team</h2>
+                <form action="/add_team/{{ code }}" method="POST" class="space-y-3">
+                    <input name="team_name" type="text" placeholder="Team name" required
+                        class="w-full p-3 border rounded" />
+                    <button class="w-full bg-blue-500 text-white py-2 rounded-xl font-bold hover:bg-blue-400">
+                        Add Team
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow">
+                <h2 class="text-xl font-bold mb-4">Add Player</h2>
+                <form action="/add_player/{{ code }}" method="POST" class="space-y-3">
+                    <input name="player_name" type="text" placeholder="Player name" required
+                        class="w-full p-3 border rounded" />
+                    <select name="team_id" class="w-full p-3 border rounded">
+                        {% for team in teams %}
+                            <option value="{{ team.id }}">{{ team.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="w-full bg-blue-500 text-white py-2 rounded-xl font-bold hover:bg-blue-400">
+                        Add Player
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white p-5 rounded-2xl shadow">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold">Team setup</h2>
+                        <p class="text-sm text-gray-500">Ready players, team assignments, and event timeline.</p>
+                    </div>
+                    {% if user == game.host and not game.started %}
+                    <form action="/start_night/{{ code }}" method="POST">
+                        <button class="rounded-2xl bg-green-500 px-5 py-3 text-white font-bold hover:bg-green-400">
+                            Start the event!
+                        </button>
+                    </form>
+                    {% elif game.started %}
+                    <a href="{{ url_for('main.game', code=code) }}" class="rounded-2xl bg-blue-500 px-5 py-3 text-white font-bold hover:bg-blue-400">
+                        Continue to Game
+                    </a>
+                    {% else %}
+                    <div class="rounded-2xl bg-yellow-50 border-l-4 border-yellow-400 p-4 text-yellow-800">
+                        Only the host <span class="font-semibold">{{ game.host }}</span> can start the game.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    {% for team in teams %}
+                        <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                            <h3 class="font-semibold text-blue-900">{{ team.name }}</h3>
+                            <p class="text-sm text-blue-600">{{ team.players|length }} players</p>
+                            {% if team.players %}
+                            <ul class="mt-3 space-y-2 text-blue-800 text-sm">
+                                {% for player in team.players %}
+                                    <li>• {{ player.name }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    {% if not teams %}
+                        <div class="rounded-2xl border border-dashed border-blue-200 bg-blue-50 p-4 text-blue-700">
+                            No teams defined yet. Add a team to organize players before starting.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow">
+                <h2 class="text-xl font-bold mb-4">Upcoming events</h2>
+                {% if events %}
+                    <div class="space-y-4">
+                        {% for event in events %}
+                            <div class="rounded-2xl border border-blue-200 p-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="font-semibold text-blue-900">{{ event.name }}</p>
+                                        <p class="text-sm text-blue-600">{{ event.stage }}</p>
+                                    </div>
+                                    <span class="rounded-full bg-blue-100 px-3 py-1 text-xs uppercase tracking-wide text-blue-700">
+                                        {{ loop.index }}
+                                    </span>
+                                </div>
+                                {% if event.results %}
+                                    <p class="mt-3 text-sm text-green-700">Already recorded</p>
+                                {% elif current_event and current_event.id == event.id %}
+                                    <p class="mt-3 text-sm text-blue-700">Next event to score</p>
+                                {% else %}
+                                    <p class="mt-3 text-sm text-gray-500">Waiting for start.</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500">No events scheduled yet. Add rounds to fill the night.</p>
+                {% endif %}
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow">
+                <h2 class="text-xl font-bold mb-4">Schedule event</h2>
+                <form action="/create_event/{{ code }}" method="POST" class="grid gap-3">
+                    <input name="event_name" type="text" placeholder="Event name" required class="w-full p-3 border rounded" />
+                    <select name="stage" class="w-full p-3 border rounded">
+                        <option value="Heat">Heat</option>
+                        <option value="Semi">Semi</option>
+                        <option value="Final">Final</option>
+                    </select>
+                    <button class="w-full bg-green-500 text-white py-2 rounded-xl font-bold hover:bg-green-400">
+                        Add Event
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -12,6 +12,7 @@ class Game(db.Model):
     name = db.Column(db.String(120), nullable=False)
     host = db.Column(db.String(120), nullable=False)
     platform = db.Column(db.String(50), nullable=False, default="Wii")
+    started = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
 
     teams = db.relationship(

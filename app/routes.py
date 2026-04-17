@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, session, abort
 from .models import db, Game, Team, Player, Event, TeamResult
 import secrets
 
@@ -47,11 +47,19 @@ def _stage_sort_value(stage: str) -> int:
     return order.get(stage, 99)
 
 
+def _get_current_user():
+    return session.get("username")
+
+
+def _set_current_user(username, code):
+    session["username"] = username
+    session["game_code"] = code
+
+
 @main.route("/")
 def home():
-    games = Game.query.order_by(Game.created_at.desc()).limit(10).all()
     plans = list(GAME_PLANS.keys())
-    return render_template("index.html", games=games, plans=plans)
+    return render_template("index.html", plans=plans)
 
 
 @main.route("/create_game", methods=["POST"])
@@ -70,6 +78,7 @@ def create_game():
     game = Game(code=code, name=game_name, host=username, platform=platform)
     team = Team(name=team_name, game=game)
     player = Player(name=username, score=0, game=game, team=team)
+
     db.session.add(game)
     db.session.add(team)
     db.session.add(player)
@@ -79,8 +88,8 @@ def create_game():
         db.session.add(event)
 
     db.session.commit()
-
-    return redirect(url_for("main.game", code=code))
+    _set_current_user(username, code)
+    return redirect(url_for("main.lobby", code=code))
 
 
 @main.route("/join_game", methods=["POST"])
@@ -96,6 +105,7 @@ def join_game():
     if not game:
         return "Game not found", 404
 
+    team = None
     if team_name:
         team = Team.query.filter_by(name=team_name, game_id=game.id).first()
         if not team:
@@ -115,7 +125,48 @@ def join_game():
         player.team = team
 
     db.session.commit()
-    return redirect(url_for("main.game", code=game_code))
+    _set_current_user(username, game_code)
+    return redirect(url_for("main.lobby", code=game_code))
+
+
+@main.route("/lobby/<code>")
+def lobby(code):
+    game = Game.query.filter_by(code=code).first()
+    if not game:
+        return "Game not found", 404
+
+    current_user = _get_current_user()
+    if not current_user:
+        return redirect(url_for("main.home"))
+
+    teams = sorted(game.teams, key=lambda team: team.name)
+    events = sorted(game.events, key=lambda event: (_stage_sort_value(event.stage), event.sort_order))
+    current_event = next((event for event in events if not event.results), None)
+
+    return render_template(
+        "lobby.html",
+        game=game,
+        code=code,
+        user=current_user,
+        teams=teams,
+        events=events,
+        current_event=current_event,
+    )
+
+
+@main.route("/start_night/<code>", methods=["POST"])
+def start_night(code):
+    game = Game.query.filter_by(code=code).first()
+    if not game:
+        return "Game not found", 404
+
+    current_user = _get_current_user()
+    if current_user != game.host:
+        abort(403)
+
+    game.started = True
+    db.session.commit()
+    return redirect(url_for("main.game", code=code))
 
 
 @main.route("/add_team/<code>", methods=["POST"])
@@ -135,7 +186,7 @@ def add_team(code):
         db.session.add(team)
         db.session.commit()
 
-    return redirect(url_for("main.game", code=code))
+    return redirect(url_for("main.lobby", code=code))
 
 
 @main.route("/add_player/<code>", methods=["POST"])
@@ -165,7 +216,7 @@ def add_player(code):
         player.team = team
 
     db.session.commit()
-    return redirect(url_for("main.game", code=code))
+    return redirect(url_for("main.lobby", code=code))
 
 
 @main.route("/create_event/<code>", methods=["POST"])
@@ -185,7 +236,7 @@ def create_event(code):
     db.session.add(event)
     db.session.commit()
 
-    return redirect(url_for("main.game", code=code))
+    return redirect(url_for("main.lobby", code=code))
 
 
 @main.route("/add_result/<code>", methods=["POST"])
@@ -224,8 +275,12 @@ def game(code):
     if not game:
         return "Game not found"
 
+    if not game.started:
+        return redirect(url_for("main.lobby", code=code))
+
     teams = sorted(game.teams, key=lambda team: -team.score_total)
     events = sorted(game.events, key=lambda event: (_stage_sort_value(event.stage), event.sort_order))
+    current_event = next((event for event in events if not event.results), None)
 
     return render_template(
         "game.html",
@@ -233,4 +288,5 @@ def game(code):
         code=code,
         teams=teams,
         events=events,
+        current_event=current_event,
     )
