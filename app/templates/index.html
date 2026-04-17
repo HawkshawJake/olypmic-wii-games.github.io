@@ -12,10 +12,10 @@
     <div class="p-6" x-data="{ isLoginPage: true }">
 
         <!-- HEADER -->
-        <header class="flex w-full justify-between">
-            <div></div>
-
-            <!-- toggle buttons -->
+        <header class="flex w-full justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Wii Olympics</h1>
+            </div>
             <div>
                 <button 
                     type="button" 
@@ -69,6 +69,14 @@
                     </select>
                 </div>
 
+                <div class="w-full rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                    <input 
+                        name="team_name"
+                        type="text" 
+                        placeholder="First team name (optional)" 
+                        class="my-3 w-full border-none bg-transparent outline-none" />
+                </div>
+
                 <button class="w-full rounded-2xl border-b-4 border-b-blue-600 bg-blue-500 py-3 font-bold text-white hover:bg-blue-400">
                     START GAME
                 </button>
@@ -85,7 +93,7 @@
                         name="username"
                         required
                         type="text" 
-                        placeholder="Username" 
+                        placeholder="Your name" 
                         class="my-3 w-full border-none bg-transparent outline-none" />
                 </div>
 
@@ -95,6 +103,14 @@
                         required
                         type="text" 
                         placeholder="Game Code" 
+                        class="my-3 w-full border-none bg-transparent outline-none" />
+                </div>
+
+                <div class="w-full rounded-2xl bg-gray-50 px-4 ring-2 ring-gray-200 focus-within:ring-blue-400">
+                    <input 
+                        name="team_name"
+                        type="text" 
+                        placeholder="Team name (optional)" 
                         class="my-3 w-full border-none bg-transparent outline-none" />
                 </div>
 
@@ -125,7 +141,7 @@
 
             <!-- FOOTER -->
             <div class="mt-8 text-sm text-gray-400">
-                By signing in, you agree to not sue me as I don't have any money 
+                By signing in, you agree to not sue me as I don't have any money.
             </div>
 
         </div>
