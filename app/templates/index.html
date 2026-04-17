@@ -1,97 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Wii Olympics | One Night</title>
+    <title>Wii Sports Menu | Wii Olympics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100">
+<body class="min-h-screen bg-gradient-to-b from-sky-400 via-sky-500 to-slate-950 text-slate-100">
 <main class="relative min-h-screen overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.12),_transparent_28%)]"></div>
-    <div class="relative mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-10">
-        <div class="mb-8 rounded-[2rem] border border-white/10 bg-slate-900/90 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
-            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                    <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">One night. Two consoles.</p>
-                    <h1 class="mt-3 text-4xl font-semibold text-white sm:text-5xl">Wii Olympics Game Night</h1>
-                    <p class="mt-4 max-w-2xl text-slate-300 sm:text-lg">Start a single game night with a curated lineup of Wii and Switch events. The host launches the lobby when teams are ready.</p>
-                </div>
-                <div class="grid gap-3 sm:grid-cols-2">
-                    <div class="rounded-3xl border border-white/10 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/20">
-                        <p class="text-sm text-slate-400">Wii lineup</p>
-                        <ul class="mt-4 space-y-2 text-white">
-                            <li>• Bowling</li>
-                            <li>• Tennis</li>
-                            <li>• Boxing</li>
-                        </ul>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/20">
-                        <p class="text-sm text-slate-400">Switch lineup</p>
-                        <ul class="mt-4 space-y-2 text-white">
-                            <li>• Bowling</li>
-                            <li>• Tennis</li>
-                            <li>• Chambara</li>
-                            <li>• Badminton</li>
-                        </ul>
-                    </div>
+    <div class="absolute inset-0 opacity-80 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.35),_transparent_20%),radial-gradient(circle_at_bottom_right,_rgba(15,23,42,0.7),_transparent_30%)]"></div>
+    <div class="relative mx-auto max-w-7xl px-6 py-8">
+        <div class="mb-6 rounded-3xl border border-white/15 bg-slate-950/80 p-5 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="rounded-3xl bg-slate-900/80 px-4 py-3 text-sm uppercase tracking-[0.3em] text-slate-200 shadow-inner shadow-white/5">Main Menu</div>
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl font-bold tracking-tight text-slate-100">Wii</span>
+                    <span class="text-3xl font-semibold tracking-tight text-cyan-300">Sports</span>
                 </div>
             </div>
         </div>
 
-        <div class="relative mx-auto w-full max-w-3xl rounded-[2rem] border border-white/10 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl" x-data="{ isLoginPage: true }">
-            <div class="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
-                <div class="text-center md:text-left">
-                    <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Ready to play</p>
-                    <h2 class="mt-3 text-3xl font-semibold text-white">Create or join the lobby</h2>
+        <div class="grid gap-6 lg:grid-cols-[1.1fr_1.4fr]">
+            <section class="space-y-4 rounded-[2rem] border border-white/15 bg-slate-950/85 p-6 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
+                <div class="rounded-[2rem] border border-white/10 bg-sky-200/10 p-4 text-center text-sm uppercase tracking-[0.35em] text-slate-300">Wii Sports line-up</div>
+                <div class="space-y-3">
+                    <button class="w-full rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-6 py-5 text-left text-xl font-semibold text-white shadow-[0_20px_60px_-40px_rgba(0,0,0,0.5)] transition hover:border-cyan-300/40">Tennis</button>
+                    <button class="w-full rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-6 py-5 text-left text-xl font-semibold text-white shadow-[0_20px_60px_-40px_rgba(0,0,0,0.5)] transition hover:border-cyan-300/40">Baseball</button>
+                    <button class="w-full rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-6 py-5 text-left text-xl font-semibold text-white shadow-[0_20px_60px_-40px_rgba(0,0,0,0.5)] transition hover:border-cyan-300/40">Bowling</button>
+                    <button class="w-full rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-6 py-5 text-left text-xl font-semibold text-white shadow-[0_20px_60px_-40px_rgba(0,0,0,0.5)] transition hover:border-cyan-300/40">Golf</button>
+                    <button class="w-full rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-6 py-5 text-left text-xl font-semibold text-white shadow-[0_20px_60px_-40px_rgba(0,0,0,0.5)] transition hover:border-cyan-300/40">Boxing</button>
                 </div>
-                <div class="flex items-center rounded-full bg-slate-800/90 p-2 shadow-inner shadow-black/20">
-                    <button type="button" @click="isLoginPage = true" :class="isLoginPage ? 'bg-cyan-400 text-slate-950 shadow' : 'text-slate-300 hover:text-white'" class="rounded-full px-5 py-2 text-sm font-semibold transition">Create</button>
-                    <button type="button" @click="isLoginPage = false" :class="!isLoginPage ? 'bg-cyan-400 text-slate-950 shadow' : 'text-slate-300 hover:text-white'" class="rounded-full px-5 py-2 text-sm font-semibold transition">Join</button>
+                <div class="mt-6 rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-5 text-slate-300">
+                    <p class="text-sm uppercase tracking-[0.35em] text-sky-200/80">Tonight&apos;s fixed sequence</p>
+                    <ul class="mt-4 space-y-2 text-base leading-6 text-white">
+                        <li>• Wii Bowling</li>
+                        <li>• Wii Tennis</li>
+                        <li>• Wii Boxing</li>
+                        <li>• Switch Bowling</li>
+                        <li>• Switch Tennis</li>
+                        <li>• Switch Chambara</li>
+                        <li>• Switch Badminton</li>
+                    </ul>
                 </div>
-            </div>
+            </section>
 
-            <div class="grid gap-6">
-                <form action="/create_game" method="POST" x-show="isLoginPage" class="space-y-5">
-                    <div class="space-y-4 rounded-3xl border border-white/10 bg-slate-950/90 p-5">
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-300">Host name</label>
-                            <input name="username" required type="text" placeholder="Your name" class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400" />
-                        </div>
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-300">Game night title</label>
-                            <input name="game_name" required type="text" placeholder="Game night name" class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400" />
-                        </div>
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-300">Team name</label>
-                            <input name="team_name" type="text" placeholder="First team name (optional)" class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400" />
-                        </div>
+            <section class="relative rounded-[2rem] border border-white/15 bg-slate-950/90 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
+                <div class="absolute inset-x-6 top-6 h-28 rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900/40 via-sky-400/10 to-transparent blur-2xl"></div>
+                <div class="relative z-10 space-y-6">
+                    <div class="rounded-[1.75rem] border border-white/10 bg-slate-900/90 p-5 shadow-inner shadow-white/5">
+                        <h2 class="text-3xl font-bold text-white">Host the event</h2>
+                        <p class="mt-3 text-slate-300">Start the game night, share the code with your friends, and keep the lineup locked in for one smooth session.</p>
                     </div>
-                    <button class="w-full rounded-3xl bg-cyan-400 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-slate-950 shadow-xl shadow-cyan-500/20 transition hover:bg-cyan-300">Start game night</button>
-                </form>
 
-                <form action="/join_game" method="POST" x-show="!isLoginPage" class="space-y-5">
-                    <div class="space-y-4 rounded-3xl border border-white/10 bg-slate-950/90 p-5">
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-300">Player name</label>
-                            <input name="username" required type="text" placeholder="Your name" class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400" />
+                    <div class="rounded-[1.75rem] border border-cyan-300/15 bg-slate-900/95 p-6 shadow-xl shadow-cyan-300/5">
+                        <div class="flex items-center justify-between gap-4 rounded-3xl border border-slate-800 bg-slate-900/80 px-5 py-4">
+                            <div>
+                                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Current game</p>
+                                <p class="mt-2 text-xl font-semibold text-white">Wii Olympics Night</p>
+                            </div>
+                            <span class="rounded-full bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-200">LIVE</span>
                         </div>
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-300">Game code</label>
-                            <input name="game_code" required type="text" placeholder="Enter code" class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400" />
-                        </div>
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-300">Team name</label>
-                            <input name="team_name" type="text" placeholder="Team name (optional)" class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400" />
-                        </div>
+
+                        <form action="/create_game" method="POST" class="mt-6 space-y-4">
+                            <input name="username" required type="text" placeholder="Host name" class="w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-4 text-white outline-none focus:border-cyan-400" />
+                            <input name="game_name" required type="text" placeholder="Game night name" class="w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-4 text-white outline-none focus:border-cyan-400" />
+                            <input name="team_name" type="text" placeholder="First team name (optional)" class="w-full rounded-3xl border border-slate-800 bg-slate-950 px-4 py-4 text-white outline-none focus:border-cyan-400" />
+                            <button class="w-full rounded-[1.5rem] bg-cyan-400 py-4 text-base font-semibold uppercase tracking-[0.15em] text-slate-950 transition hover:bg-cyan-300">Start Game Night</button>
+                        </form>
                     </div>
-                    <button class="w-full rounded-3xl bg-cyan-400 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-slate-950 shadow-xl shadow-cyan-500/20 transition hover:bg-cyan-300">Join game</button>
-                </form>
-            </div>
-        </div>
 
-        <div class="mt-8 rounded-[2rem] border border-white/10 bg-slate-900/90 p-8 text-slate-300 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
-            <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Game night details</p>
-            <p class="mt-4 leading-7 text-slate-300">This experience is designed as a single-game-night flow with a curated mix of Wii classics and Switch matchups. The host starts the lobby when everyone is ready.</p>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <a href="#" class="rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-5 py-4 text-center text-sm font-semibold uppercase tracking-[0.15em] text-slate-200 hover:bg-slate-900">Manual</a>
+                        <a href="#" class="rounded-[1.5rem] border border-white/10 bg-slate-900/80 px-5 py-4 text-center text-sm font-semibold uppercase tracking-[0.15em] text-slate-200 hover:bg-slate-900">Options</a>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </main>
