@@ -14,19 +14,21 @@ def _generate_game_code():
 
 @main.route("/")
 def home():
-    return render_template("index.html")
+    games = Game.query.order_by(Game.created_at.desc()).limit(10).all()
+    return render_template("index.html", games=games)
 
 
 @main.route("/create_game", methods=["POST"])
 def create_game():
     username = request.form.get("username")
     game_name = request.form.get("game_name")
+    platform = request.form.get("platform", "Wii")
 
     if not username or not game_name:
         return "Missing username or game name", 400
 
     code = _generate_game_code()
-    game = Game(code=code, name=game_name, host=username)
+    game = Game(code=code, name=game_name, host=username, platform=platform)
     player = Player(name=username, score=0, game=game)
 
     db.session.add(game)
