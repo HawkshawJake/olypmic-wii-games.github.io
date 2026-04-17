@@ -8,147 +8,95 @@
 <div class="relative mx-auto max-w-7xl px-6 py-10">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.1),_transparent_26%)]"></div>
     <div class="relative space-y-8">
-        <div class="rounded-[2rem] border border-white/10 bg-slate-900/90 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
+        <section class="rounded-[2rem] border border-white/10 bg-slate-900/90 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Live event</p>
+                    <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Game phase</p>
                     <h1 class="mt-3 text-4xl font-semibold text-white">{{ game.name }}</h1>
-                    <div class="mt-3 flex flex-wrap gap-3 text-sm text-slate-300">
-                        <span>Code <span class="font-mono text-cyan-300">{{ code }}</span></span>
-                        <span>Platform <span class="font-semibold text-white">{{ game.platform }}</span></span>
-                    </div>
+                    <p class="mt-2 text-slate-300">Code <span class="font-mono text-cyan-300">{{ code }}</span> · Host <span class="font-semibold text-white">{{ game.host }}</span></p>
                 </div>
-                <a href="/" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-cyan-500/15 px-5 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/25">← Back</a>
+                <a href="/" class="inline-flex items-center rounded-full border border-white/10 bg-slate-800/80 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">← Home</a>
             </div>
-        </div>
+        </section>
 
-        <div class="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-            <div class="space-y-6">
-                <div class="rounded-[1.75rem] border border-white/10 bg-slate-900/90 p-6 shadow-xl shadow-slate-950/30">
+        <div class="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
+            <aside class="space-y-6">
+                <div class="rounded-[1.75rem] border border-white/10 bg-slate-900/85 p-6 shadow-xl shadow-slate-950/30">
+                    <h2 class="text-xl font-semibold text-white">Current event</h2>
+                    {% if current_event %}
+                        <p class="mt-4 text-slate-300">Now playing:</p>
+                        <p class="mt-2 text-2xl font-bold text-white">{{ current_event.name }}</p>
+                        <p class="mt-1 text-sm text-slate-400">Stage: {{ current_event.stage }}</p>
+                    {% else %}
+                        <p class="mt-4 text-slate-300">All events are complete.</p>
+                    {% endif %}
+                </div>
+
+                <div class="rounded-[1.75rem] border border-white/10 bg-slate-900/85 p-6 shadow-xl shadow-slate-950/30">
                     <h2 class="text-xl font-semibold text-white">Teams</h2>
                     <div class="mt-5 space-y-4">
                         {% if teams %}
                             {% for team in teams %}
                                 <div class="rounded-3xl border border-slate-800 bg-slate-800/90 p-4">
-                                    <div class="flex items-center justify-between gap-3">
+                                    <div class="flex items-center justify-between gap-4">
                                         <div>
-                                            <p class="text-lg font-semibold text-white">{{ team.name }}</p>
-                                            <p class="mt-1 text-sm text-slate-400">{{ team.players|length }} players</p>
+                                            <p class="font-semibold text-white">{{ team.name }}</p>
+                                            <p class="text-sm text-slate-400">{{ team.players|length }} players</p>
                                         </div>
-                                        <span class="rounded-full bg-cyan-400/15 px-3 py-1 text-sm font-semibold uppercase tracking-[0.12em] text-cyan-200">{{ team.score_total }} pts</span>
+                                        <span class="rounded-full bg-cyan-400/15 px-3 py-1 text-sm font-semibold text-cyan-200">{{ team.score_total }} pts</span>
                                     </div>
-                                    {% if team.players %}
-                                        <div class="mt-4 space-y-2 text-slate-300 text-sm">
-                                            {% for player in team.players %}
-                                                <div>• {{ player.name }}</div>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <p class="text-slate-400">No teams yet. Add one and let players join.</p>
+                            <p class="text-slate-400">No teams set up yet.</p>
                         {% endif %}
                     </div>
                 </div>
-
-                <div class="rounded-[1.75rem] border border-white/10 bg-slate-900/90 p-6 shadow-xl shadow-slate-950/30">
-                    <h2 class="text-xl font-semibold text-white">Add Team</h2>
-                    <form action="/add_team/{{ code }}" method="POST" class="mt-5 space-y-4">
-                        <input name="team_name" type="text" placeholder="Team name" required class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" />
-                        <button class="w-full rounded-3xl bg-cyan-400 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-slate-950 transition hover:bg-cyan-300">Add Team</button>
-                    </form>
-                </div>
-
-                <div class="rounded-[1.75rem] border border-white/10 bg-slate-900/90 p-6 shadow-xl shadow-slate-950/30">
-                    <h2 class="text-xl font-semibold text-white">Add Player</h2>
-                    <form action="/add_player/{{ code }}" method="POST" class="mt-5 space-y-4">
-                        <input name="player_name" type="text" placeholder="Player name" required class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" />
-                        <select name="team_id" class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300">
-                            {% for team in teams %}
-                                <option value="{{ team.id }}">{{ team.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button class="w-full rounded-3xl bg-cyan-400 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-slate-950 transition hover:bg-cyan-300">Add Player</button>
-                    </form>
-                </div>
-            </div>
+            </aside>
 
             <div class="space-y-6">
-                <div class="rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-xl shadow-slate-950/30">
-                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <h2 class="text-xl font-semibold text-white">Event rounds</h2>
-                            <p class="mt-2 text-slate-400">Track each event and add scores as the night progresses.</p>
-                        </div>
-                        {% if current_event %}
-                            <div class="rounded-3xl bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-200">Next: {{ current_event.name }}</div>
-                        {% endif %}
-                    </div>
-
+                <div class="rounded-[2rem] border border-white/10 bg-slate-900/85 p-6 shadow-xl shadow-slate-950/30">
+                    <h2 class="text-xl font-semibold text-white">Event progression</h2>
+                    <p class="mt-3 text-slate-400">The game will advance through each event in order. Record results here to update team totals.</p>
                     <div class="mt-6 space-y-4">
-                        {% if events %}
-                            {% for event in events %}
-                                <div class="rounded-3xl border border-slate-800 bg-slate-800/90 p-5">
-                                    <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-                                        <div>
-                                            <p class="text-lg font-semibold text-white">{{ event.name }}</p>
-                                            <p class="mt-1 text-sm text-slate-400">{{ event.stage }}</p>
-                                        </div>
-                                        <span class="rounded-full bg-cyan-400/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">{{ loop.index }}</span>
+                        {% for event in events %}
+                            <div class="rounded-3xl border border-slate-800 bg-slate-800/90 p-4">
+                                <div class="flex items-center justify-between gap-4">
+                                    <div>
+                                        <p class="font-semibold text-white">{{ event.name }}</p>
+                                        <p class="text-sm text-slate-400">{{ event.stage }}</p>
                                     </div>
                                     {% if event.results %}
-                                        <div class="mt-4 space-y-3 text-slate-200">
-                                            {% for result in event.results %}
-                                                <div class="flex items-center justify-between rounded-3xl bg-slate-900 px-4 py-3 text-sm">
-                                                    <span>{{ result.team.name }}</span>
-                                                    <span class="font-semibold text-cyan-300">{{ result.points }} pts</span>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
+                                        <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">Done</span>
+                                    {% elif current_event and event.id == current_event.id %}
+                                        <span class="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">Current</span>
                                     {% else %}
-                                        <p class="mt-4 text-slate-400">No results yet. Record the outcome to update team totals.</p>
+                                        <span class="rounded-full bg-slate-700/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">Pending</span>
                                     {% endif %}
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-slate-400">Create heats, semis, and finals for this game night.</p>
-                        {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
 
-                <div class="rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-xl shadow-slate-950/30">
-                    <h2 class="text-xl font-semibold text-white">Schedule event</h2>
-                    <form action="/create_event/{{ code }}" method="POST" class="mt-5 grid gap-4">
-                        <input name="event_name" type="text" placeholder="Event name" required class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" />
-                        <select name="stage" class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300">
-                            <option value="Heat">Heat</option>
-                            <option value="Semi">Semi</option>
-                            <option value="Final">Final</option>
-                        </select>
-                        <button class="w-full rounded-3xl bg-emerald-500 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-slate-950 transition hover:bg-emerald-400">Add Event</button>
-                    </form>
-                </div>
-
-                <div class="rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-xl shadow-slate-950/30">
-                    <h2 class="text-xl font-semibold text-white">Record a result</h2>
-                    <form action="/add_result/{{ code }}" method="POST" class="mt-5 grid gap-4">
-                        <select name="event_id" class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" required>
-                            {% for event in events %}
-                                <option value="{{ event.id }}">{{ event.stage }} - {{ event.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select name="team_id" class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" required>
-                            {% for team in teams %}
-                                <option value="{{ team.id }}">{{ team.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <input name="points" type="number" placeholder="Points" required class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" />
-                        <button class="w-full rounded-3xl bg-emerald-500 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-slate-950 transition hover:bg-emerald-400">Save Result</button>
-                    </form>
+                <div class="rounded-[2rem] border border-white/10 bg-slate-900/85 p-6 shadow-xl shadow-slate-950/30">
+                    <h2 class="text-xl font-semibold text-white">Record result</h2>
+                    {% if current_event %}
+                        <form action="/add_result/{{ code }}" method="POST" class="mt-5 grid gap-4">
+                            <input type="hidden" name="event_id" value="{{ current_event.id }}" />
+                            <select name="team_id" class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" required>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <input name="points" type="number" placeholder="Points" required class="w-full rounded-3xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-300" />
+                            <button class="w-full rounded-3xl bg-cyan-400 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-slate-950 transition hover:bg-cyan-300">Save Result</button>
+                        </form>
+                    {% else %}
+                        <p class="text-slate-400">The night is complete. Review final totals above.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div></body>
-</html>
+</div>

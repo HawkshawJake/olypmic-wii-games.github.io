@@ -116,6 +116,9 @@ def lobby(code):
     if not current_user:
         return redirect(url_for("main.home"))
 
+    if game.started:
+        return redirect(url_for("main.game", code=code))
+
     teams = sorted(game.teams, key=lambda team: team.name)
     events = sorted(game.events, key=lambda event: (_stage_sort_value(event.stage), event.sort_order))
     current_event = next((event for event in events if not event.results), None)
